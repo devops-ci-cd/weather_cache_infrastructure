@@ -143,4 +143,5 @@ obj
 appsettings.json
 local.settings.json
 .python_packages
-.vscode
+
+notes.txt
