@@ -141,3 +141,9 @@ django_project_frontend/notes.txt
 .vscode/
 Dockerfile
 local.settings.json
+.terraform
+azure_infrastructure/terraform/terraform.exe
+azure_infrastructure/terraform/.terraform.*
+azure_infrastructure/terraform/*.tfstate.*
+azure_infrastructure/terraform/.tfstate
+azure_infrastructure/terraform/terraform.tfstate
