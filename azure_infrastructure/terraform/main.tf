@@ -32,7 +32,7 @@ resource "azurerm_mssql_database" "db" {
   collation      = "SQL_Latin1_General_CP1_CI_AS"
   max_size_gb    = 1
   sku_name       = "GP_S_Gen5_1"
-  min_capacity   = 1
+  min_capacity   = 0.5
   zone_redundant = false
   storage_account_type = "LRS"
   auto_pause_delay_in_minutes = 60
