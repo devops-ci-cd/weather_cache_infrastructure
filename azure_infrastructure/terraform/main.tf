@@ -17,7 +17,6 @@ resource "azurerm_mssql_server" "db_server" {
   resource_group_name          = var.rg
   location                     = var.location
   version                      = "12.0"
-
   # get from the vault
   administrator_login          = "4dm1n157r470r"
   administrator_login_password = "4-v3ry-adsfasdfasdf-p455wasdfasdfadsasdf0rd"
