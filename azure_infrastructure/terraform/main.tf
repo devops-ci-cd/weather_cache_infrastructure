@@ -5,17 +5,17 @@ terraform {
       version = ">2.46.0"
     }
   }
-}
-
-
-provider "azurerm" {
-   backend "azurerm" {
+  backend "azurerm" {
     storage_account_name = "__terraformstorageaccount__"
       container_name       = "terraform"
       key                  = "terraform.tfstate"
 	  access_key  ="__storagekey__"
-    features {}
-   }
+  }
+}
+
+
+provider "azurerm" {
+  features {}
 }
 
 resource "azurerm_mssql_server" "db_server" {
