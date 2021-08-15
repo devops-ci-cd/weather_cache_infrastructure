@@ -5,6 +5,7 @@ terraform {
       version = ">2.46.0"
     }
   }
+
   backend "azurerm" {
     storage_account_name = "__terraformstorageaccount__"
       container_name       = "terraform"
@@ -21,15 +22,14 @@ provider "azurerm" {
   # tenant_id       = var.tenant_id
 }
 
+
 resource "azurerm_mssql_server" "db_server" {
   name                         = "${var.prefix}-db-server"
   resource_group_name          = var.rg
   location                     = var.location
   version                      = "12.0"
-  # get from the vault
   administrator_login          = var.administrator_login
   administrator_login_password = var.administrator_password
-
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
   }
