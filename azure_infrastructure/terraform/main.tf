@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">2.46.0"
     }
+    random = {
+      source = "hashicorp/random"
+      version = "3.1.0"
+    }
   }
 
   backend "azurerm" {
@@ -14,6 +18,8 @@ terraform {
   }
 }
 
+
+
 provider "azurerm" {
   features {}
   # subscription_id = var.subscription_id
@@ -22,9 +28,11 @@ provider "azurerm" {
   # tenant_id       = var.tenant_id
 }
 
+resource "random_uuid" "az-id" {
+}
 
 resource "azurerm_mssql_server" "db_server" {
-  name                         = "${var.prefix}-db-server"
+  name                         = "${var.prefix}-db-server-${random_uuid.az-id.result}"
   resource_group_name          = var.rg
   location                     = var.location
   version                      = "12.0"
@@ -37,7 +45,7 @@ resource "azurerm_mssql_server" "db_server" {
 }
 
 resource "azurerm_mssql_database" "db" {
-  name           = "${var.prefix}-db"
+  name           = "${var.prefix}-db-${random_uuid.az-id.result}"
   server_id      = azurerm_mssql_server.db_server.id
   collation      = "SQL_Latin1_General_CP1_CI_AS"
   max_size_gb    = 1
