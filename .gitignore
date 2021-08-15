@@ -144,3 +144,4 @@ local.settings.json
 .python_packages
 notes.txt
 Dockerfile
+azure_infrastructure/terraform/terraform.tfvars
