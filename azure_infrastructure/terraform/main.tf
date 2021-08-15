@@ -6,20 +6,19 @@ terraform {
     }
   }
   backend "azurerm" {
-    storage_account_name = var.terraform_storage_account
+    storage_account_name = "__terraformstorageaccount__"
       container_name       = "terraform"
       key                  = "terraform.tfstate"
-	  access_key  = var.storage_access_key
+	  access_key  = "__storagekey__"
   }
 }
 
-
 provider "azurerm" {
   features {}
-  subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
-  tenant_id       = var.tenant_id
+  # subscription_id = var.subscription_id
+  # client_id       = var.client_id
+  # client_secret   = var.client_secret
+  # tenant_id       = var.tenant_id
 }
 
 resource "azurerm_mssql_server" "db_server" {

@@ -1,4 +1,3 @@
-
 # variable definition and default values
 
 variable "prefix" {
@@ -24,31 +23,23 @@ variable "subscription_id" {
 
 variable "client_id" {
   description = "Service principal client id"
-  value = "__id__"
+  default = "__id__"
 }
 
 variable "client_secret" {
   description = "Service principal client password"
-  value = "__password__"
+  default = "__password__"
 }
 
 variable "tenant_id" {
   description = "Service principal tenant id"
-  value = "__tenant_id__"
-}
-
-variable "storage_access_key" {
-  value = "__storagekey__"
-}
-
-variable "terraform_storage_account" {
-  value = "__terraformstorageaccount__"
+  default = "__tenant_id__"
 }
 
 variable "administrator_login" {
-  value = "__administrator_login__"
+  default = "__administrator_login__"
 }
 
 variable "administrator_password" {
-  value = "__administrator_password__"
+  default = "__administrator_password__"
 }
