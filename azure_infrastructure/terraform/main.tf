@@ -6,16 +6,20 @@ terraform {
     }
   }
   backend "azurerm" {
-    storage_account_name = "__terraformstorageaccount__"
+    storage_account_name = var.terraform_storage_account
       container_name       = "terraform"
       key                  = "terraform.tfstate"
-	  access_key  ="__storagekey__"
+	  access_key  = var.storage_access_key
   }
 }
 
 
 provider "azurerm" {
   features {}
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
 }
 
 resource "azurerm_mssql_server" "db_server" {
@@ -24,8 +28,8 @@ resource "azurerm_mssql_server" "db_server" {
   location                     = var.location
   version                      = "12.0"
   # get from the vault
-  administrator_login          = "4dm1n157r470r"
-  administrator_login_password = "4-v3ry-adsfasdfasdf-p455wasdfasdfadsasdf0rd"
+  administrator_login          = var.administrator_login
+  administrator_login_password = var.administrator_password
 
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
