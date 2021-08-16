@@ -68,3 +68,38 @@ resource "azurerm_mssql_database" "db" {
   }
 
 }
+
+resource "azurerm_app_service_plan" "asp" {
+  name                = "${var.prefix}-ASP-${random_uuid.az-id.result}"
+  location            = var.location
+  resource_group_name = var.rg
+  kind                = "Linux"
+  reserved            = true
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
+  }
+  
+  tags = {
+    owner = "Evgeny_Polyarush@epam.com"
+  }
+}
+
+resource "azurerm_function_app" "backend-query" {
+  name                       = "${var.prefix}-queries-${random_uuid.az-id.result}"
+  location                   = var.location
+  resource_group_name        = var.rg
+  app_service_plan_id        = azurerm_app_service_plan.asp.id
+  storage_account_name       = var.storage_account_name
+  storage_account_access_key = var.storage_account_access_key
+  os_type                    = "linux"
+
+  tags = {
+    owner = "Evgeny_Polyarush@epam.com"
+  }
+}
+
+output "azure_app_name" {
+  value = azurerm_function_app.backend-query.name
+}

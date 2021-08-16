@@ -43,3 +43,11 @@ variable "administrator_login" {
 variable "administrator_password" {
   default = "__administrator_password__"
 }
+
+variable "storage_account_name" {
+  default = "__terraformstorageaccount__"  
+}
+
+variable "storage_account_access_key" {
+  default = "__storagekey__"
+}
