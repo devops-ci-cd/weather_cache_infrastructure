@@ -6,3 +6,4 @@ $json = Get-Content $env:jsonPath | Out-String | ConvertFrom-Json
 
 Write-Host "##vso[task.setvariable variable=MyNewIp]$($json.public_ip_address.value)"
 
+$(terraform output -json | Out-String | ConvertFrom-Json).azure_app_name.value
