@@ -10,20 +10,12 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-# - script: echo Hello, world!
-#   displayName: 'Run a one-line script'
-
-# - script: |
-#     echo Add other tasks to build, test, and deploy your project.
-#     echo See https://aka.ms/yaml
-#     pwd
-#   displayName: 'Run a multi-line script'
 
 - task: CopyFiles@2
   displayName: 'Copy Terraform files to artifacts'
   inputs:
-    SourceFolder: azure_infrastructure/terraform
-    TargetFolder: '$(build.artifactstagingdirectory)/Terraform'
+    SourceFolder: terraform
+    TargetFolder: '$(build.artifactstagingdirectory)/terraform'
 
 - task: PublishBuildArtifacts@1
   inputs:
