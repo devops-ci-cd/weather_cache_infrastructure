@@ -10,8 +10,8 @@ CREATE TABLE [dbo].[WeatherCache](
 	[CityTitle] [varchar](255) NULL,
 	[WoeID] [int] NOT NULL,
 	[Date] [date] NOT NULL,
-	[MaxTemp] [tinyint] NOT NULL,
-	[MinTemp] [tinyint] NOT NULL,
+	[MaxTemp] [smallint] NOT NULL,
+	[MinTemp] [smallint] NOT NULL,
 	[Humidity] [tinyint] NOT NULL,
  CONSTRAINT [PK_WeatherCache] PRIMARY KEY CLUSTERED 
 (
