@@ -98,7 +98,38 @@ resource "azurerm_function_app" "backend-query" {
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
   }
+  
+  depends_on = [
+    azurerm_app_service_plan.asp,
+  ]
 }
+
+resource "azurerm_servicebus_namespace" "sb_namespace" {
+  name                = "${var.prefix}-sb-${random_uuid.az-id.result}"
+  location            = var.location
+  resource_group_name = var.rg
+  sku                 = "Basic"
+
+  tags = {
+    owner = "Evgeny_Polyarush@epam.com"
+  }
+}
+
+resource "azurerm_servicebus_queue" "queue" {
+  name                = "${var.prefix}-queue-${random_uuid.az-id.result}"
+  resource_group_name = var.rg
+  namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
+  
+  max_size_in_megabytes = 1024
+  max_delivery_count = 10
+  # lock_duration = 30
+  enable_partitioning = false
+  
+  depends_on = [
+    azurerm_servicebus_namespace.sb_namespace,
+  ]
+}
+
 
 output "azure_app_name" {
   value = azurerm_function_app.backend-query.name
