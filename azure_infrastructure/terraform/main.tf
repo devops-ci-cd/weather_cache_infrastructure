@@ -99,8 +99,19 @@ resource "azurerm_function_app" "backend-query" {
     owner = "Evgeny_Polyarush@epam.com"
   }
   
+  app_settings = {
+    APPINSIGHTS_INSTRUMENTATIONKEY = "",
+    APPLICATIONINSIGHTS_CONNECTION_STRING = "",
+    DB_USER = var.administrator_login,
+    azure_db_name = azurerm_mssql_database.db.name,
+    azure_db_server_name = azurerm_mssql_server.db_server.name,
+    password = var.administrator_password,
+    SERVICEBUS_ENDPOINT = ""
+  }
+
   depends_on = [
     azurerm_app_service_plan.asp,
+    azurerm_servicebus_queue.queue,
   ]
 }
 
