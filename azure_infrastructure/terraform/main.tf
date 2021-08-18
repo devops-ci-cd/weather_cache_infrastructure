@@ -94,6 +94,7 @@ resource "azurerm_function_app" "backend" {
   storage_account_name       = var.storage_account_name
   storage_account_access_key = var.storage_account_access_key
   os_type                    = "linux"
+  version                    = "~3"
 
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
@@ -174,6 +175,11 @@ resource "azurerm_app_service" "frontend" {
     location            = var.location
     resource_group_name = var.rg
     app_service_plan_id = azurerm_app_service_plan.frontend.id
+
+    
+    site_config {
+      linux_fx_version = "PYTHON|3.6"
+    }
 
     tags = {
       owner = "Evgeny_Polyarush@epam.com"
