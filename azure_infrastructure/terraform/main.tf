@@ -69,11 +69,11 @@ resource "azurerm_mssql_database" "db" {
 
 }
 
-resource "azurerm_app_service_plan" "asp" {
-  name                = "${var.prefix}-ASP-${random_uuid.az-id.result}"
+resource "azurerm_app_service_plan" "backend" {
+  name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
-  kind                = "Linux"
+  kind                = "FunctionApp"
   reserved            = true
 
   sku {
@@ -86,11 +86,11 @@ resource "azurerm_app_service_plan" "asp" {
   }
 }
 
-resource "azurerm_function_app" "backend-query" {
-  name                       = "${var.prefix}-queries-${random_uuid.az-id.result}"
+resource "azurerm_function_app" "backend" {
+  name                       = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location                   = var.location
   resource_group_name        = var.rg
-  app_service_plan_id        = azurerm_app_service_plan.asp.id
+  app_service_plan_id        = azurerm_app_service_plan.backend.id
   storage_account_name       = var.storage_account_name
   storage_account_access_key = var.storage_account_access_key
   os_type                    = "linux"
@@ -106,11 +106,12 @@ resource "azurerm_function_app" "backend-query" {
     azure_db_name = azurerm_mssql_database.db.name,
     azure_db_server_name = azurerm_mssql_server.db_server.name,
     password = var.administrator_password,
-    SERVICEBUS_ENDPOINT = ""
+    SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
+    SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name  
   }
 
   depends_on = [
-    azurerm_app_service_plan.asp,
+    azurerm_app_service_plan.backend,
     azurerm_servicebus_queue.queue,
   ]
 }
@@ -124,6 +125,16 @@ resource "azurerm_servicebus_namespace" "sb_namespace" {
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
   }
+}
+
+resource "azurerm_servicebus_namespace_authorization_rule" "auth" {
+  name                = "${var.prefix}-sb-rule"
+  namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
+  resource_group_name = var.rg
+
+  listen = true
+  send   = true
+  manage = false
 }
 
 resource "azurerm_servicebus_queue" "queue" {
@@ -141,7 +152,52 @@ resource "azurerm_servicebus_queue" "queue" {
   ]
 }
 
+resource "azurerm_app_service_plan" "frontend" {
+    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+    location            = var.location
+    resource_group_name = var.rg
+    kind                = "Linux"
+    reserved            = true
+
+    sku {
+      tier = "Basic"
+      size = "B1"
+    }
+    
+    tags = {
+      owner = "Evgeny_Polyarush@epam.com"
+    }
+}
+
+resource "azurerm_app_service" "frontend" {
+    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+    location            = var.location
+    resource_group_name = var.rg
+    app_service_plan_id = azurerm_app_service_plan.frontend.id
+
+    tags = {
+      owner = "Evgeny_Polyarush@epam.com"
+    }
+
+    app_settings = {
+      APPINSIGHTS_INSTRUMENTATIONKEY = "",
+      APPLICATIONINSIGHTS_CONNECTION_STRING = "",
+      DB_USER = var.administrator_login,
+      azure_db_name = azurerm_mssql_database.db.name,
+      azure_db_server_name = azurerm_mssql_server.db_server.name,
+      password = var.administrator_password,
+      SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
+      SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name
+    }
+
+    depends_on = [
+      azurerm_app_service_plan.frontend,
+      azurerm_servicebus_queue.queue,
+    ]
+  
+}
+
 
 output "azure_app_name" {
-  value = azurerm_function_app.backend-query.name
+  value = azurerm_function_app.backend.name
 }
