@@ -41,7 +41,7 @@ variable "administrator_login" {
 }
 
 variable "administrator_password" {
-  default = "__administrator_password__"
+  default = "__db-administrator__"
 }
 
 variable "storage_account_name" {
@@ -49,5 +49,5 @@ variable "storage_account_name" {
 }
 
 variable "storage_account_access_key" {
-  default = "__storagekey__"
+  default = "__storage-account-access-key__"
 }
