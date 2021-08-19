@@ -1,4 +1,13 @@
 /****** Object:  Table [dbo].[WeatherCache]    Script Date: 10.08.2021 16:44:22 ******/
+/****** 
+Use this example to update the sql schema
+IF NOT EXISTS(
+    SELECT * 
+    FROM [information_schema].[referential_constraints] 
+    WHERE constraint_name = 'FK_Constraint_Name' 
+      AND constraint_schema = 'dbo'
+) ******/
+
 SET ANSI_NULLS ON
 GO
 
