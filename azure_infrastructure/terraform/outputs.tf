@@ -14,6 +14,6 @@ output "azure_db_name" {
   value = azurerm_mssql_database.db.name
 }
 
-output "main_rg" {
-  value = var.rg
+output "db_server_rg" {
+  value = azurerm_mssql_server.db_server.resource_group_name
 }
