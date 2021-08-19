@@ -42,7 +42,7 @@ resource "azurerm_mssql_server" "db_server" {
 
 # Allow Azure services and resources to access this server
 resource "azurerm_mssql_firewall_rule" "fw" {
-  name             = "FirewallRule1"
+  name             = "AllowAzureServices"
   server_id        = azurerm_mssql_server.db_server.id
   start_ip_address = "0.0.0.0"
   end_ip_address   = "0.0.0.0"
