@@ -17,3 +17,7 @@ output "azure_db_name" {
 output "db_server_rg" {
   value = azurerm_mssql_server.db_server.resource_group_name
 }
+
+output "queue_name" {
+  value = azurerm_servicebus_queue.queue.name
+}
