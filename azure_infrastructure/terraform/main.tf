@@ -63,6 +63,9 @@ resource "azurerm_mssql_database" "db" {
     owner = "Evgeny_Polyarush@epam.com"
   }
 
+  depends_on = [
+    azurerm_mssql_server.db_server,
+  ]
 }
 
 resource "azurerm_app_service_plan" "backend" {
