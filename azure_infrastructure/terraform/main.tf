@@ -83,7 +83,7 @@ resource "azurerm_app_service_plan" "backend" {
   name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
-  kind                = "FunctionApp"
+  kind                = "functionapp"
   reserved            = true
 
   sku {
