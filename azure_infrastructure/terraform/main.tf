@@ -68,6 +68,13 @@ resource "azurerm_mssql_database" "db" {
   ]
 }
 
+resource "azurerm_application_insights" "backend" {
+  name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
+  location            = var.location
+  resource_group_name = var.rg
+  application_type    = "web"
+}
+
 resource "azurerm_app_service_plan" "backend" {
   name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location            = var.location
@@ -95,16 +102,24 @@ resource "azurerm_function_app" "backend" {
   os_type                    = "linux"
   version                    = "~3"
 
+  site_config {
+      linux_fx_version = "PYTHON|3.7"
+  }
+
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
   }
   
   app_settings = {
-    APPINSIGHTS_INSTRUMENTATIONKEY = "",
-    APPLICATIONINSIGHTS_CONNECTION_STRING = "",
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.backend.instrumentation_key,
+     # AzureWebJobsStorage = "storage account conn string"
+     # FUNCTIONS_EXTENSION_VERSION
+    FUNCTIONS_WORKER_RUNTIME = "python",
     DB_USER = var.administrator_login,
+     #     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = "storage account conn string",
+     #     WEBSITE_CONTENTSHARE = azurerm_function_app.backend.name,
     azure_db_name = azurerm_mssql_database.db.name,
-    azure_db_server_name = azurerm_mssql_server.db_server.name,
+    azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
     password = var.administrator_password,
     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name  
@@ -152,52 +167,52 @@ resource "azurerm_servicebus_queue" "queue" {
   ]
 }
 
-resource "azurerm_app_service_plan" "frontend" {
-    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
-    location            = var.location
-    resource_group_name = var.rg
-    kind                = "Linux"
-    reserved            = true
+# resource "azurerm_app_service_plan" "frontend" {
+#     name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+#     location            = var.location
+#     resource_group_name = var.rg
+#     kind                = "Linux"
+#     reserved            = true
 
-    sku {
-      tier = "Basic"
-      size = "B1"
-    }
+#     sku {
+#       tier = "Basic"
+#       size = "B1"
+#     }
     
-    tags = {
-      owner = "Evgeny_Polyarush@epam.com"
-    }
-}
+#     tags = {
+#       owner = "Evgeny_Polyarush@epam.com"
+#     }
+# }
 
-resource "azurerm_app_service" "frontend" {
-    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
-    location            = var.location
-    resource_group_name = var.rg
-    app_service_plan_id = azurerm_app_service_plan.frontend.id
+# resource "azurerm_app_service" "frontend" {
+#     name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+#     location            = var.location
+#     resource_group_name = var.rg
+#     app_service_plan_id = azurerm_app_service_plan.frontend.id
 
     
-    site_config {
-      linux_fx_version = "PYTHON|3.6"
-    }
+#     site_config {
+#       linux_fx_version = "PYTHON|3.6"
+#     }
 
-    tags = {
-      owner = "Evgeny_Polyarush@epam.com"
-    }
+#     tags = {
+#       owner = "Evgeny_Polyarush@epam.com"
+#     }
 
-    app_settings = {
-      APPINSIGHTS_INSTRUMENTATIONKEY = "",
-      APPLICATIONINSIGHTS_CONNECTION_STRING = "",
-      DB_USER = var.administrator_login,
-      azure_db_name = azurerm_mssql_database.db.name,
-      azure_db_server_name = azurerm_mssql_server.db_server.name,
-      password = var.administrator_password,
-      SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
-      SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name
-    }
+#     app_settings = {
+#       APPINSIGHTS_INSTRUMENTATIONKEY = "",
+#       APPLICATIONINSIGHTS_CONNECTION_STRING = "",
+#       DB_USER = var.administrator_login,
+#       azure_db_name = azurerm_mssql_database.db.name,
+#       azure_db_server_name = azurerm_mssql_server.db_server.name,
+#       password = var.administrator_password,
+#       SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
+#       SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name
+#     }
 
-    depends_on = [
-      azurerm_app_service_plan.frontend,
-      azurerm_servicebus_queue.queue,
-    ]
+#     depends_on = [
+#       azurerm_app_service_plan.frontend,
+#       azurerm_servicebus_queue.queue,
+#     ]
   
-}
+# }
