@@ -153,7 +153,7 @@ resource "azurerm_servicebus_namespace_authorization_rule" "auth" {
 }
 
 resource "azurerm_servicebus_queue" "queue" {
-  name                = "${var.prefix}queue"
+  name                = "${random_uuid.az-id.result}"
   resource_group_name = var.rg
   namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
   
