@@ -219,7 +219,8 @@ resource "azurerm_app_service" "frontend" {
       azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
       password = var.administrator_password,
       SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
-      SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name
+      SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
+      SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     }
 
     depends_on = [
