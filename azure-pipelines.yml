@@ -15,4 +15,3 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/Infrastructure'
-    
