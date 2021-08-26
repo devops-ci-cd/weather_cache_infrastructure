@@ -36,6 +36,7 @@ resource "azurerm_mssql_server" "db_server" {
   administrator_login_password = var.administrator_password
   tags = {
     owner = "Evgeny_Polyarush@epam.com"
+    env = "Production"
   }
 
 }
