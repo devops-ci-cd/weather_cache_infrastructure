@@ -35,8 +35,8 @@ resource "azurerm_mssql_server" "db_server" {
   administrator_login          = var.administrator_login
   administrator_login_password = var.administrator_password
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
-    env = "Production"
+    owner = var.owner
+    env = var.environment
   }
 
 }
@@ -61,7 +61,8 @@ resource "azurerm_mssql_database" "db" {
   auto_pause_delay_in_minutes = 60
 
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
+    owner = var.owner
+    env = var.environment
   }
 
   depends_on = [
@@ -76,7 +77,8 @@ resource "azurerm_application_insights" "backend" {
   application_type    = "web"
 
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
+    owner = var.owner
+    env = var.environment
   }
 }
 
@@ -93,7 +95,8 @@ resource "azurerm_app_service_plan" "backend" {
   }
   
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
+    owner = var.owner
+    env = var.environment
   }
 }
 
@@ -112,7 +115,8 @@ resource "azurerm_function_app" "backend" {
   }
 
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
+    owner = var.owner
+    env = var.environment
   }
   
   app_settings = {
@@ -140,7 +144,8 @@ resource "azurerm_servicebus_namespace" "sb_namespace" {
   sku                 = "Basic"
 
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
+    owner = var.owner
+    env = var.environment
   }
 }
 
@@ -176,7 +181,8 @@ resource "azurerm_application_insights" "frontend" {
   application_type    = "web"
   
   tags = {
-    owner = "Evgeny_Polyarush@epam.com"
+    owner = var.owner
+    env = var.environment
   }
   
 }
@@ -193,41 +199,43 @@ resource "azurerm_app_service_plan" "frontend" {
       size = "B1"
     }
     
-    tags = {
-      owner = "Evgeny_Polyarush@epam.com"
-    }
+  tags = {
+    owner = var.owner
+    env = var.environment
+  }
 }
 
 resource "azurerm_app_service" "frontend" {
-    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
-    location            = var.location
-    resource_group_name = var.rg
-    app_service_plan_id = azurerm_app_service_plan.frontend.id
+  name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+  location            = var.location
+  resource_group_name = var.rg
+  app_service_plan_id = azurerm_app_service_plan.frontend.id
 
-    
-    site_config {
-      linux_fx_version = "PYTHON|3.7"
-    }
+  
+  site_config {
+    linux_fx_version = "PYTHON|3.7"
+  }
 
-    tags = {
-      owner = "Evgeny_Polyarush@epam.com"
-    }
+  tags = {
+    owner = var.owner
+    env = var.environment
+  }
 
-    app_settings = {
-      APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.frontend.instrumentation_key,
-      DB_USER = var.administrator_login,
-      azure_db_name = azurerm_mssql_database.db.name,
-      azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
-      password = var.administrator_password,
-      SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
-      SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
-      SCM_DO_BUILD_DURING_DEPLOYMENT = 1
-    }
+  app_settings = {
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.frontend.instrumentation_key,
+    DB_USER = var.administrator_login,
+    azure_db_name = azurerm_mssql_database.db.name,
+    azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
+    password = var.administrator_password,
+    SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
+    SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
+    SCM_DO_BUILD_DURING_DEPLOYMENT = 1
+  }
 
-    depends_on = [
-      azurerm_app_service_plan.frontend,
-      azurerm_servicebus_queue.queue,
-      azurerm_application_insights.frontend,
-    ]
+  depends_on = [
+    azurerm_app_service_plan.frontend,
+    azurerm_servicebus_queue.queue,
+    azurerm_application_insights.frontend,
+  ]
   
 }

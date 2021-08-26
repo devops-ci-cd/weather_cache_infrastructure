@@ -1,19 +1,27 @@
 # variable definition and default values
+variable "owner" {
+  description = "Owner tag"
+  default = "__owner__"  
+}
+
+variable "environment" {
+  description = "Environment tag"
+  default = "__environment__"
+}
 
 variable "prefix" {
-  type = string
-  default = "polyarush"
+  default = "__prefix__"
   description = "The prefix used for all resources"
 }
 
 variable "location" {
   description = "The Azure location where all resources should be created"
-  default = "West Europe"
+  default = "__location__"
 }
 
 variable "rg" {
   description = "Resource group where all resources should be created"
-  default = "EPM-RDSP"
+  default = "__rg__"
 }
 
 variable "subscription_id" {
