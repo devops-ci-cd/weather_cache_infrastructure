@@ -70,172 +70,172 @@ resource "azurerm_mssql_database" "db" {
   ]
 }
 
-resource "azurerm_application_insights" "backend" {
-  name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
-  location            = var.location
-  resource_group_name = var.rg
-  application_type    = "web"
+# resource "azurerm_application_insights" "backend" {
+#   name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
+#   location            = var.location
+#   resource_group_name = var.rg
+#   application_type    = "web"
 
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
-}
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
+# }
 
-resource "azurerm_app_service_plan" "backend" {
-  name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
-  location            = var.location
-  resource_group_name = var.rg
-  kind                = "FunctionApp"
-  reserved            = true
+# resource "azurerm_app_service_plan" "backend" {
+#   name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
+#   location            = var.location
+#   resource_group_name = var.rg
+#   kind                = "FunctionApp"
+#   reserved            = true
 
-  sku {
-    tier = "Dynamic"
-    size = "Y1"
-  }
+#   sku {
+#     tier = "Dynamic"
+#     size = "Y1"
+#   }
   
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
-}
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
+# }
 
-resource "azurerm_function_app" "backend" {
-  name                       = "${var.prefix}-backend-${random_uuid.az-id.result}"
-  location                   = var.location
-  resource_group_name        = var.rg
-  app_service_plan_id        = azurerm_app_service_plan.backend.id
-  storage_account_name       = var.storage_account_name
-  storage_account_access_key = var.storage_account_access_key
-  os_type                    = "linux"
-  version                    = "~3"
+# resource "azurerm_function_app" "backend" {
+#   name                       = "${var.prefix}-backend-${random_uuid.az-id.result}"
+#   location                   = var.location
+#   resource_group_name        = var.rg
+#   app_service_plan_id        = azurerm_app_service_plan.backend.id
+#   storage_account_name       = var.storage_account_name
+#   storage_account_access_key = var.storage_account_access_key
+#   os_type                    = "linux"
+#   version                    = "~3"
 
-  site_config {
-      linux_fx_version = "PYTHON|3.7"
-  }
+#   site_config {
+#       linux_fx_version = "PYTHON|3.7"
+#   }
 
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
   
-  app_settings = {
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.backend.instrumentation_key,
-    FUNCTIONS_WORKER_RUNTIME = "python",
-    DB_USER = var.administrator_login,
-    azure_db_name = azurerm_mssql_database.db.name,
-    azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
-    password = var.administrator_password,
-    SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
-    SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name  
-  }
+#   app_settings = {
+#     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.backend.instrumentation_key,
+#     FUNCTIONS_WORKER_RUNTIME = "python",
+#     DB_USER = var.administrator_login,
+#     azure_db_name = azurerm_mssql_database.db.name,
+#     azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
+#     password = var.administrator_password,
+#     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
+#     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name  
+#   }
 
-  depends_on = [
-    azurerm_app_service_plan.backend,
-    azurerm_servicebus_queue.queue,
-    azurerm_application_insights.backend,
-  ]
-}
+#   depends_on = [
+#     azurerm_app_service_plan.backend,
+#     azurerm_servicebus_queue.queue,
+#     azurerm_application_insights.backend,
+#   ]
+# }
 
-resource "azurerm_servicebus_namespace" "sb_namespace" {
-  name                = "${var.prefix}-sb-${random_uuid.az-id.result}"
-  location            = var.location
-  resource_group_name = var.rg
-  sku                 = "Basic"
+# resource "azurerm_servicebus_namespace" "sb_namespace" {
+#   name                = "${var.prefix}-sb-${random_uuid.az-id.result}"
+#   location            = var.location
+#   resource_group_name = var.rg
+#   sku                 = "Basic"
 
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
-}
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
+# }
 
-resource "azurerm_servicebus_namespace_authorization_rule" "auth" {
-  name                = "${var.prefix}-sb-rule"
-  namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
-  resource_group_name = var.rg
+# resource "azurerm_servicebus_namespace_authorization_rule" "auth" {
+#   name                = "${var.prefix}-sb-rule"
+#   namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
+#   resource_group_name = var.rg
 
-  listen = true
-  send   = true
-  manage = false
-}
+#   listen = true
+#   send   = true
+#   manage = false
+# }
 
-resource "azurerm_servicebus_queue" "queue" {
-  name                = "${random_uuid.az-id.result}"
-  resource_group_name = var.rg
-  namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
+# resource "azurerm_servicebus_queue" "queue" {
+#   name                = "${random_uuid.az-id.result}"
+#   resource_group_name = var.rg
+#   namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
   
-  max_size_in_megabytes = 1024
-  max_delivery_count = 10
-  # lock_duration = 30
-  enable_partitioning = false
+#   max_size_in_megabytes = 1024
+#   max_delivery_count = 10
+#   # lock_duration = 30
+#   enable_partitioning = false
   
-  depends_on = [
-    azurerm_servicebus_namespace.sb_namespace,
-  ]
-}
+#   depends_on = [
+#     azurerm_servicebus_namespace.sb_namespace,
+#   ]
+# }
 
-resource "azurerm_application_insights" "frontend" {
-  name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
-  location            = var.location
-  resource_group_name = var.rg
-  application_type    = "web"
+# resource "azurerm_application_insights" "frontend" {
+#   name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+#   location            = var.location
+#   resource_group_name = var.rg
+#   application_type    = "web"
   
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
   
-}
+# }
 
-resource "azurerm_app_service_plan" "frontend" {
-    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
-    location            = var.location
-    resource_group_name = var.rg
-    kind                = "Linux"
-    reserved            = true
+# resource "azurerm_app_service_plan" "frontend" {
+#     name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+#     location            = var.location
+#     resource_group_name = var.rg
+#     kind                = "Linux"
+#     reserved            = true
 
-    sku {
-      tier = "Basic"
-      size = "B1"
-    }
+#     sku {
+#       tier = "Basic"
+#       size = "B1"
+#     }
     
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
-}
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
+# }
 
-resource "azurerm_app_service" "frontend" {
-  name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
-  location            = var.location
-  resource_group_name = var.rg
-  app_service_plan_id = azurerm_app_service_plan.frontend.id
+# resource "azurerm_app_service" "frontend" {
+#   name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
+#   location            = var.location
+#   resource_group_name = var.rg
+#   app_service_plan_id = azurerm_app_service_plan.frontend.id
 
   
-  site_config {
-    linux_fx_version = "PYTHON|3.7"
-  }
+#   site_config {
+#     linux_fx_version = "PYTHON|3.7"
+#   }
 
-  tags = {
-    owner = var.owner
-    env = var.environment
-  }
+#   tags = {
+#     owner = var.owner
+#     env = var.environment
+#   }
 
-  app_settings = {
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.frontend.instrumentation_key,
-    DB_USER = var.administrator_login,
-    azure_db_name = azurerm_mssql_database.db.name,
-    azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
-    password = var.administrator_password,
-    SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
-    SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
-    SCM_DO_BUILD_DURING_DEPLOYMENT = 1
-  }
+#   app_settings = {
+#     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.frontend.instrumentation_key,
+#     DB_USER = var.administrator_login,
+#     azure_db_name = azurerm_mssql_database.db.name,
+#     azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
+#     password = var.administrator_password,
+#     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
+#     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
+#     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
+#   }
 
-  depends_on = [
-    azurerm_app_service_plan.frontend,
-    azurerm_servicebus_queue.queue,
-    azurerm_application_insights.frontend,
-  ]
+#   depends_on = [
+#     azurerm_app_service_plan.frontend,
+#     azurerm_servicebus_queue.queue,
+#     azurerm_application_insights.frontend,
+#   ]
   
-}
+# }
