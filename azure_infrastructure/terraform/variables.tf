@@ -59,3 +59,7 @@ variable "storage_account_name" {
 variable "storage_account_access_key" {
   default = "__storage-account-access-key__"
 }
+
+variable "keyvault" {
+  default = "__keyvault__"
+}
