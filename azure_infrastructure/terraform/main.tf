@@ -219,7 +219,7 @@ resource "azurerm_app_service_plan" "frontend" {
   }
    
   depends_on = [
-    azurerm_function_app,
+    azurerm_function_app.backend,
   ]
 }
 
@@ -255,7 +255,7 @@ resource "azurerm_app_service" "frontend" {
     azurerm_app_service_plan.frontend,
     azurerm_servicebus_queue.queue,
     azurerm_application_insights.frontend,
-    azurerm_function_app
+    azurerm_function_app.backend
   ]
   
 }
