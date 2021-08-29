@@ -27,9 +27,9 @@ provider "azurerm" {
 # resource "random_uuid" "az-id" {
 # }
 
-# resource "random_id" "az-id" {
-#   byte_length = 2
-# }
+resource "random_id" "az-id" {
+  byte_length = 2
+}
 
 data "azurerm_key_vault_secret" "django_secret_key" {
   name         = "django-secret-key"
