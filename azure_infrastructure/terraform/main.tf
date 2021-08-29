@@ -24,11 +24,7 @@ provider "azurerm" {
   features {}
 }
 
-# resource "random_uuid" "az-id" {
-# }
-
-resource "random_id" "az-id" {
-  byte_length = 2
+resource "random_uuid" "az-id" {
 }
 
 data "azurerm_key_vault_secret" "django_secret_key" {
@@ -42,7 +38,7 @@ data "azurerm_key_vault" "keyvault" {
 }
 
 resource "azurerm_mssql_server" "db_server" {
-  name                         = "${var.prefix}-db-server-${random_id.az-id.id}r"
+  name                         = "${var.prefix}-db-server-${random_uuid.az-id.result}"
   resource_group_name          = var.rg
   location                     = var.location
   version                      = "12.0"
@@ -64,7 +60,7 @@ resource "azurerm_mssql_firewall_rule" "fw" {
 }
 
 resource "azurerm_mssql_database" "db" {
-  name           = "${var.prefix}-db-${random_id.az-id.id}r"
+  name           = "${var.prefix}-db-${random_uuid.az-id.result}"
   server_id      = azurerm_mssql_server.db_server.id
   collation      = "SQL_Latin1_General_CP1_CI_AS"
   max_size_gb    = 1
@@ -85,7 +81,7 @@ resource "azurerm_mssql_database" "db" {
 }
 
 resource "azurerm_application_insights" "backend" {
-  name                = "${var.prefix}-backend-${random_id.az-id.id}r"
+  name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
   application_type    = "web"
@@ -97,7 +93,7 @@ resource "azurerm_application_insights" "backend" {
 }
 
 resource "azurerm_app_service_plan" "backend" {
-  name                = "${var.prefix}-backend-${random_id.az-id.id}r"
+  name                = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
   kind                = "FunctionApp"
@@ -115,7 +111,7 @@ resource "azurerm_app_service_plan" "backend" {
 }
 
 resource "azurerm_function_app" "backend" {
-  name                       = "${var.prefix}-backend-${random_id.az-id.id}r"
+  name                       = "${var.prefix}-backend-${random_uuid.az-id.result}"
   location                   = var.location
   resource_group_name        = var.rg
   app_service_plan_id        = azurerm_app_service_plan.backend.id
@@ -152,7 +148,7 @@ resource "azurerm_function_app" "backend" {
 }
 
 resource "azurerm_servicebus_namespace" "sb_namespace" {
-  name                = "${var.prefix}-sb-${random_id.az-id.id}r"
+  name                = "${var.prefix}-sb-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
   sku                 = "Basic"
@@ -174,7 +170,7 @@ resource "azurerm_servicebus_namespace_authorization_rule" "auth" {
 }
 
 resource "azurerm_servicebus_queue" "queue" {
-  name                = "${random_id.az-id.id}r"
+  name                = "${random_uuid.az-id.result}"
   resource_group_name = var.rg
   namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
   
@@ -189,7 +185,7 @@ resource "azurerm_servicebus_queue" "queue" {
 }
 
 resource "azurerm_application_insights" "frontend" {
-  name                = "${var.prefix}-frontend-${random_id.az-id.id}r"
+  name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
   application_type    = "web"
@@ -202,7 +198,7 @@ resource "azurerm_application_insights" "frontend" {
 }
 
 resource "azurerm_app_service_plan" "frontend" {
-    name                = "${var.prefix}-frontend-${random_id.az-id.id}r"
+    name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
     location            = var.location
     resource_group_name = var.rg
     kind                = "Linux"
@@ -224,7 +220,7 @@ resource "azurerm_app_service_plan" "frontend" {
 }
 
 resource "azurerm_app_service" "frontend" {
-  name                = "${var.prefix}-frontend-${random_id.az-id.id}r"
+  name                = "${var.prefix}-frontend-${random_uuid.az-id.result}"
   location            = var.location
   resource_group_name = var.rg
   app_service_plan_id = azurerm_app_service_plan.frontend.id
