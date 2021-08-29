@@ -63,3 +63,7 @@ variable "storage_account_access_key" {
 variable "keyvault" {
   default = "__keyvault__"
 }
+
+variable "suffix" {
+  default = "dev"
+}
