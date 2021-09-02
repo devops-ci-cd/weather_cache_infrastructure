@@ -138,7 +138,7 @@ resource "azurerm_function_app" "backend" {
     password = var.administrator_password,
     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
-    secret_command = "__secret_command__"
+    # secret_command = "__secret_command__"
   }
 
   depends_on = [
@@ -246,7 +246,8 @@ resource "azurerm_app_service" "frontend" {
     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1,
     django_secret_key = data.azurerm_key_vault_secret.django_secret_key.value,
-    secret_command = "__secret_command__"
+    secret_command = "__secret_command__",
+    STRESS_MINS = 2
   }
 
   depends_on = [
