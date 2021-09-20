@@ -152,3 +152,4 @@ local.settings.json
 notes.txt
 Dockerfile
 azure_infrastructure/terraform/terraform.tfvars
+.DS_Store
