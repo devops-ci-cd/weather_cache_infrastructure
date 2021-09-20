@@ -246,7 +246,7 @@ resource "azurerm_app_service" "frontend" {
     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1,
     django_secret_key = data.azurerm_key_vault_secret.django_secret_key.value,
-    secret_command = "__secret_command__",
+    secret_command = "__secret-command__",
     STRESS_MINS = 2
   }
 
