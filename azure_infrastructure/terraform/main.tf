@@ -27,6 +27,16 @@ provider "azurerm" {
 resource "random_uuid" "az-id" {
 }
 
+data "azurerm_key_vault_secret" "django_secret_key" {
+  name         = "django-secret-key"
+  key_vault_id = data.azurerm_key_vault.keyvault.id
+}
+
+data "azurerm_key_vault" "keyvault" {
+  name                = var.keyvault
+  resource_group_name = var.rg
+}
+
 resource "azurerm_mssql_server" "db_server" {
   name                         = "${var.prefix}-db-server-${random_uuid.az-id.result}"
   resource_group_name          = var.rg
@@ -127,7 +137,7 @@ resource "azurerm_function_app" "backend" {
     azure_db_server_name = "${azurerm_mssql_server.db_server.name}.database.windows.net",
     password = var.administrator_password,
     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
-    SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name  
+    SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
   }
 
   depends_on = [
@@ -203,6 +213,10 @@ resource "azurerm_app_service_plan" "frontend" {
     owner = var.owner
     env = var.environment
   }
+   
+  depends_on = [
+    azurerm_function_app.backend,
+  ]
 }
 
 resource "azurerm_app_service" "frontend" {
@@ -229,13 +243,17 @@ resource "azurerm_app_service" "frontend" {
     password = var.administrator_password,
     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
-    SCM_DO_BUILD_DURING_DEPLOYMENT = 1
+    SCM_DO_BUILD_DURING_DEPLOYMENT = 1,
+    django_secret_key = data.azurerm_key_vault_secret.django_secret_key.value,
+    secret_command = "__secret-command__",
+    STRESS_MINS = 2
   }
 
   depends_on = [
     azurerm_app_service_plan.frontend,
     azurerm_servicebus_queue.queue,
     azurerm_application_insights.frontend,
+    azurerm_function_app.backend
   ]
   
 }
