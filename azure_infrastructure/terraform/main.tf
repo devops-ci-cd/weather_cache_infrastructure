@@ -138,7 +138,6 @@ resource "azurerm_function_app" "backend" {
     password = var.administrator_password,
     SERVICE_BUS_CONNECTION_STR = azurerm_servicebus_namespace_authorization_rule.auth.primary_connection_string,
     SERVICE_BUS_QUEUE_NAME = azurerm_servicebus_queue.queue.name,
-    # secret_command = "__secret_command__"
   }
 
   depends_on = [
