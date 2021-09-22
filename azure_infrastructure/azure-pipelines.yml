@@ -9,8 +9,10 @@ steps:
   displayName: 'Copy Terraform files to artifacts'
   inputs:
     SourceFolder: azure_infrastructure/terraform
-    TargetFolder: '$(build.artifactstagingdirectory)/terraform-prod'
+    TargetFolder: '$(build.artifactstagingdirectory)/terraform'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'prod'
+
