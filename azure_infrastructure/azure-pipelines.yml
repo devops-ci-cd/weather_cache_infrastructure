@@ -1,5 +1,5 @@
 trigger:
-- dev
+- prod
 
 pool:
   vmImage: ubuntu-latest
@@ -9,7 +9,7 @@ steps:
   displayName: 'Copy Terraform files to artifacts'
   inputs:
     SourceFolder: azure_infrastructure/terraform
-    TargetFolder: '$(build.artifactstagingdirectory)/terraform'
+    TargetFolder: '$(build.artifactstagingdirectory)/terraform-prod'
 
 - task: PublishBuildArtifacts@1
   inputs:
