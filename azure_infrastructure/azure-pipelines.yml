@@ -14,5 +14,5 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: '$(System.JobId)-prod'
+    ArtifactName: 'prod'
 
